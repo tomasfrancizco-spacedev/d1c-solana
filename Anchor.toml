@@ -7,11 +7,14 @@ skip-lint = false
 [programs.localnet]
 division_one_crypto = "D6XYa4oPwgMnVX59YbFLxbYstUYEc2YTddx6xTLY4uRs"
 
+[programs.devnet]
+division_one_crypto = "BAnYCRzAkVJSTNiHYZcDnRo8B1e2pSssQwAJEjdEcLbL"
+
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet" ## change to "Devnet" for testing on devnet
+cluster = "Devnet" ## change to "Localnet" for testing on localnet
 wallet = "~/.config/solana/id.json"
 
 [scripts]

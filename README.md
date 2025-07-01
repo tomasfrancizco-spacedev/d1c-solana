@@ -1,41 +1,47 @@
 # Division One Crypto
 
-A Solana Token-2022 program implementing a transfer hook that automatically distributes fees on token transfers to support college athletics and operations.
+A Solana Token-2022 implementation with transfer fees and metadata extensions to support college athletics funding.
 
 ## Overview
 
-This project creates a token with an integrated transfer hook mechanism that automatically deducts and distributes fees on every token transfer:
+This project creates Division One ($D1C) tokens using Solana's Token-2022 standard with built-in transfer fees and metadata. The token is designed to support college athletics through a fee mechanism that will be distributed to college programs.
 
-- **0.5%** goes to operations wallet
-- **0.5%** gets burned (deflationary mechanism)  
-- **2%** goes to the user's designated college wallet
+**Current Implementation:**
+- Token-2022 with metadata extension (name, symbol, URI)
+- 3% transfer fees collected automatically on all transfers
+- 1 billion token supply
+- Scripts for token creation and minting
 
-The program uses Solana's Token-2022 standard with transfer hooks to ensure fees are collected on every transfer without requiring additional transactions.
+**Future Development:**
+- Solana program to link user accounts to college wallets via PDAs
+- Automated fee off-chain distribution system
 
 ## Features
 
-- ✅ Token-2022 compliant token with transfer hook
-- ✅ Automatic fee distribution on transfers (3% total)
-- ✅ User-configurable college wallet assignment
-- ✅ Deflationary tokenomics through burning
-- ✅ Operations funding mechanism
+- ✅ Token-2022 compliant with metadata extension
+- ✅ Built-in 3% transfer fees
+- ✅ On-chain metadata (name: "Division 1", symbol: "DC1")
+- ✅ 1 billion token supply with 9 decimals
+- ✅ Automated token creation and minting scripts
+- 🚧 College wallet linking (planned)
+- 🚧 Fee distribution mechanism (planned)
 
-## Architecture
+## Token Details
 
-The program consists of several key components:
-
-1. **Token Initialization**: Creates a Token-2022 mint with transfer hook extension
-2. **User Configuration**: Allows users to set their college wallet for fee distribution
-3. **Transfer Hook**: Automatically executes on every token transfer to collect and distribute fees
-4. **Extra Account Meta List**: Defines additional accounts needed for transfer hook execution
+- **Name**: Division 1
+- **Symbol**: DC1
+- **Decimals**: 9
+- **Max Supply**: 1,000,000,000 tokens
+- **Transfer Fee**: 3% (300 basis points)
+- **Max Fee Cap**: 1 billion tokens
+- **Network**: Solana Devnet (for testing)
 
 ## Prerequisites
 
-- [Rust](https://rustup.rs/) 1.60+
-- [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools) 1.18+
-- [Anchor CLI](https://www.anchor-lang.com/docs/installation) 0.30+
 - [Node.js](https://nodejs.org/) 16+
 - [Yarn](https://yarnpkg.com/getting-started/install)
+- [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools) 1.18+
+- Solana wallet with devnet SOL
 
 ## Setup
 
@@ -55,172 +61,118 @@ The program consists of several key components:
    # Generate a new keypair (if you don't have one)
    solana-keygen new
 
-   # Set to localnet for development
-   solana config set --url localhost
-   ```
+   # Set to devnet for development
+   solana config set --url devnet
 
-4. **Start local validator**
-   ```bash
-   solana-test-validator
-   ```
-
-## Building
-
-Build the Anchor program:
-
-```bash
-anchor build
-```
-
-This will compile the Rust program and generate TypeScript types in `target/types/`.
-
-## Testing
-
-Run the test suite:
-
-```bash
-anchor test
-```
-
-Or run tests with more verbose output:
-
-```bash
-yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts
-```
-
-## Deployment
-
-### Local Deployment
-
-1. **Deploy to localnet**
-   ```bash
-   anchor deploy
-   ```
-
-### Devnet Deployment
-
-1. **Update Anchor.toml**
-   ```toml
-   [provider]
-   cluster = "Devnet"
-   ```
-
-2. **Get devnet SOL**
-   ```bash
+   # Get devnet SOL
    solana airdrop 2
    ```
 
-3. **Deploy to devnet**
+## Scripts
+
+### 1. Create Token
+
+Creates a new Token-2022 mint with both metadata and transfer fee extensions.
+
+```bash
+yarn ts-node scripts/create-token.ts
+```
+
+**What this script does:**
+- Creates a new Token-2022 mint account
+- Initializes metadata extension with token name, symbol, and URI
+- Configures transfer fees (3% on all transfers)
+- Uses your wallet as mint authority and update authority
+- Outputs mint address and transaction details
+
+**Configuration in the script:**
+```typescript
+// Token metadata
+name: "Division 1"
+symbol: "DC1"
+uri: "https://api.jsonbin.io/v3/qs/68641c458561e97a502fc72a"
+
+// Transfer fees
+feeBasisPoints: 300 // 3%
+maxFee: BigInt(1_000_000_000_000_000_000) // 1 billion tokens
+```
+
+### 2. Mint Tokens
+
+Mints 1 billion tokens to your wallet.
+
+```bash
+yarn ts-node scripts/mint-tokens.ts
+```
+
+**Before running:**
+1. Update the `mintAddress` in the script with your token's mint address
+2. Ensure you are the mint authority
+
+**What this script does:**
+- Creates an associated token account for your wallet (if needed)
+- Mints 1,000,000,000 tokens to your account
+- Outputs transaction details and token account address
+
+## Usage Example
+
+1. **Create a new token:**
    ```bash
-   anchor deploy
+   yarn ts-node scripts/create-token.ts
+   ```
+   
+   Save the mint address from the output.
+
+2. **Update mint-tokens.ts:**
+   ```typescript
+   const mintAddress = new PublicKey('YOUR_MINT_ADDRESS_HERE');
    ```
 
-## Usage
+3. **Mint 1 billion tokens:**
+   ```bash
+   yarn ts-node scripts/mint-tokens.ts
+   ```
 
-### Initialize Token
+4. **Transfer tokens:** Use any Solana wallet or application. The 3% transfer fee will be automatically collected.
 
-```typescript
-const tx = await program.methods
-  .initializeToken(
-    "Division One Token",  // name
-    "DOT",                // symbol  
-    9,                    // decimals
-    opsWalletPubkey       // operations wallet
-  )
-  .accounts({
-    mint: mintKeypair.publicKey,
-    authority: authority.publicKey,
-    opsWallet: opsWalletPubkey,
-    tokenProgram: TOKEN_2022_PROGRAM_ID,
-    systemProgram: SystemProgram.programId,
-  })
-  .signers([mintKeypair, authority])
-  .rpc();
-```
+## Token-2022 Extensions Used
 
-### Set College Wallet
+### Metadata Pointer Extension
+- Stores token metadata directly on the mint account
+- Includes name, symbol, URI, and additional metadata
+- Allows for on-chain metadata updates
 
-Users must set their college wallet before transfers to ensure proper fee distribution:
-
-```typescript
-const tx = await program.methods
-  .setCollegeWallet(collegeWalletPubkey)
-  .accounts({
-    userConfig: userConfigPda,
-    user: userKeypair.publicKey,
-    systemProgram: SystemProgram.programId,
-  })
-  .signers([userKeypair])
-  .rpc();
-```
-
-### Token Transfers
-
-Once set up, all token transfers automatically trigger the fee mechanism. No additional steps needed from users.
-
-## Program Accounts
-
-### UserConfig
-Stores user-specific configuration:
-- `user: Pubkey` - The user's wallet address
-- `college_wallet: Pubkey` - The designated college wallet for fee distribution
-- `bump: u8` - PDA bump seed
-
-### Seeds
-- User Config PDA: `["user-config", user_pubkey]`
-- Extra Account Meta List: `["extra-account-metas", mint_pubkey]`
+### Transfer Fee Extension
+- Automatically collects 3% fee on all token transfers
+- Fees accumulate in a withheld balance
+- Configurable authorities for fee management
 
 ## Fee Structure
 
-| Fee Type | Percentage | Destination |
-|----------|------------|-------------|
-| Operations | 0.5% | Operations wallet |
-| Burn | 0.5% | Burned (deflationary) |
-| College | 2.0% | User's college wallet |
-| **Total** | **3.0%** | - |
+| Component | Rate | Authority | Purpose |
+|-----------|------|-----------|---------|
+| Transfer Fee | 3.0% | Your Wallet | Future college athletics funding, burning, OPs wallet |
 
-## Configuration
+**Fee Collection:**
+- Fees are automatically deducted from transfers
+- Accumulated fees are held in the token accounts
+- Fee authorities can withdraw accumulated fees
+- No additional transactions required from users
 
-Update `Anchor.toml` for different environments:
+## Future Development
 
-```toml
-[provider]
-cluster = "Localnet"  # or "Devnet", "Mainnet-beta"
-wallet = "~/.config/solana/id.json"
+### College Wallet Linking Program
+A Solana program that will:
+- Create PDAs linking user accounts to their chosen college wallets
+- Enable users to register and update their college affiliations
+- Provide a registry for fee distribution
 
-[programs.localnet]
-division_one_crypto = "D6XYa4oPwgMnVX59YbFLxbYstUYEc2YTddx6xTLY4uRs"
-```
+## Project Structure
 
-## Development Commands
-
-```bash
-# Build the program
-anchor build
-
-# Run tests
-anchor test
-
-# Deploy locally
-anchor deploy
-
-# Run linting
-yarn lint
-
-# Fix linting issues
-yarn lint:fix
-
-# Run specific test file
-yarn run ts-mocha -p ./tsconfig.json tests/specific-test.ts
-```
-
-## Program ID
-
-- **Localnet**: `D6XYa4oPwgMnVX59YbFLxbYstUYEc2YTddx6xTLY4uRs`
-
-## Security Considerations
-
-- Transfer hooks execute on every token transfer - ensure gas efficiency
-- User configuration accounts use PDAs for security
-- Fee calculations use integer arithmetic to avoid precision loss
-- All external accounts are validated through program constraints
+division-one-crypto/
+├── scripts/
+│ ├── create-token.ts
+│ └── mint-tokens.ts
+├── package.json
+├── tsconfig.json
+└── README.md

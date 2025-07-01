@@ -10,6 +10,7 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(feature, values("custom-he
 [lib]
 crate-type = ["cdylib", "lib"]
 name = "division_one_crypto"
+path = "src/lib.rs"
 
 [features]
 default = []
@@ -17,7 +18,12 @@ cpi = ["no-entrypoint"]
 no-entrypoint = []
 no-idl = []
 no-log-ix-name = []
-idl-build = ["anchor-lang/idl-build"]
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 
 [dependencies]
-anchor-lang = "0.31.1"
+anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
+anchor-spl = "0.31.1"
+spl-transfer-hook-interface = "0.10.0"
+spl-tlv-account-resolution = "0.10.0"
+# spl-token-2022 = "4.0.1"
+# spl-pod = "0.5.1"

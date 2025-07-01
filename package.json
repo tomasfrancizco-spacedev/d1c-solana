@@ -1,20 +1,26 @@
 {
-  "license": "ISC",  
+  "license": "ISC",
   "scripts": {
+    "deploy-test": "npx ts-node scripts/deploy-and-test.ts",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
   },
   "dependencies": {
-    "@coral-xyz/anchor": "^0.30.1"
+    "@coral-xyz/anchor": "0.31.1",
+    "@solana/spl-token": "^0.4.8",
+    "@solana/spl-token-metadata": "^0.1.6",
+    "@solana/web3.js": "^1.91.4",
+    "dotenv": "^17.0.0"
   },
   "devDependencies": {
-    "chai": "^4.3.4",
-    "mocha": "^9.0.3",
-    "ts-mocha": "^10.0.0",
     "@types/bn.js": "^5.1.0",
     "@types/chai": "^4.3.0",
     "@types/mocha": "^9.0.0",
-    "typescript": "^4.3.5",
-    "prettier": "^2.6.2"
+    "@types/node": "^24.0.8",
+    "chai": "^4.3.4",
+    "mocha": "^9.0.3",
+    "prettier": "^2.6.2",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^4.3.5"
   }
 }
