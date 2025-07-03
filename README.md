@@ -8,7 +8,7 @@ This project creates Division One ($D1C) tokens using Solana's Token-2022 standa
 
 **Current Implementation:**
 - Token-2022 with metadata extension (name, symbol, URI)
-- 3% transfer fees collected automatically on all transfers
+- 3.5% transfer fees collected automatically on all transfers
 - 1 billion token supply
 - Scripts for token creation and minting
 
@@ -19,7 +19,7 @@ This project creates Division One ($D1C) tokens using Solana's Token-2022 standa
 ## Features
 
 - ✅ Token-2022 compliant with metadata extension
-- ✅ Built-in 3% transfer fees
+- ✅ Built-in 3.5% transfer fees
 - ✅ On-chain metadata (name: "Division 1", symbol: "DC1")
 - ✅ 1 billion token supply with 9 decimals
 - ✅ Automated token creation and minting scripts
@@ -32,7 +32,7 @@ This project creates Division One ($D1C) tokens using Solana's Token-2022 standa
 - **Symbol**: DC1
 - **Decimals**: 9
 - **Max Supply**: 1,000,000,000 tokens
-- **Transfer Fee**: 3% (300 basis points)
+- **Transfer Fee**: 3.5% (350 basis points)
 - **Max Fee Cap**: 1 billion tokens
 - **Network**: Solana Devnet (for testing)
 
@@ -81,7 +81,7 @@ yarn ts-node scripts/create-token.ts
 **What this script does:**
 - Creates a new Token-2022 mint account
 - Initializes metadata extension with token name, symbol, and URI
-- Configures transfer fees (3% on all transfers)
+- Configures transfer fees (3.5% on all transfers)
 - Uses your wallet as mint authority and update authority
 - Outputs mint address and transaction details
 
@@ -93,7 +93,7 @@ symbol: "DC1"
 uri: "https://api.jsonbin.io/v3/qs/68641c458561e97a502fc72a"
 
 // Transfer fees
-feeBasisPoints: 300 // 3%
+feeBasisPoints: 350 // 3.5%
 maxFee: BigInt(1_000_000_000_000_000_000) // 1 billion tokens
 ```
 
@@ -133,7 +133,7 @@ yarn ts-node scripts/mint-tokens.ts
    yarn ts-node scripts/mint-tokens.ts
    ```
 
-4. **Transfer tokens:** Use any Solana wallet or application. The 3% transfer fee will be automatically collected.
+4. **Transfer tokens:** Use any Solana wallet or application. The 3.5% transfer fee will be automatically collected.
 
 ## Token-2022 Extensions Used
 
@@ -143,7 +143,7 @@ yarn ts-node scripts/mint-tokens.ts
 - Allows for on-chain metadata updates
 
 ### Transfer Fee Extension
-- Automatically collects 3% fee on all token transfers
+- Automatically collects 3.5% fee on all token transfers
 - Fees accumulate in a withheld balance
 - Configurable authorities for fee management
 
