@@ -1,16 +1,18 @@
 # Division One Crypto
 
-A Solana Token-2022 implementation with transfer fees and metadata extensions to support college athletics funding.
+A comprehensive Solana ecosystem combining Token-2022 with transfer fees and a custom program for linking user wallets to college athletics funding.
 
 ## Overview
 
-This project creates Division One ($D1C) tokens using Solana's Token-2022 standard with built-in transfer fees and metadata. The token is designed to support college athletics through a fee mechanism that will be distributed to college programs.
+This project creates Division One ($D1C) tokens using Solana's Token-2022 standard with built-in transfer fees, plus a custom Solana program that allows users to link their wallets to specific college wallets for fee distribution purposes.
 
 **Current Implementation:**
-- Token-2022 with metadata extension (name, symbol, URI)
-- 3% transfer fees collected automatically on all transfers
-- 1 billion token supply
-- Scripts for token creation and minting
+- ✅ Token-2022 with metadata extension (name, symbol, URI)
+- ✅ 3.5% transfer fees collected automatically on all transfers
+- ✅ 1 billion token supply with automated minting
+- ✅ Solana program for user-to-school wallet linking via PDAs
+- ✅ Complete client libraries and testing infrastructure
+- ✅ 361 Division I schools with pre-generated wallet addresses
 
 **Future Development:**
 - Solana program to link user accounts to college wallets via PDAs
@@ -18,13 +20,19 @@ This project creates Division One ($D1C) tokens using Solana's Token-2022 standa
 
 ## Features
 
+### Token Features
 - ✅ Token-2022 compliant with metadata extension
-- ✅ Built-in 3% transfer fees
+- ✅ Built-in 3.5% transfer fees
 - ✅ On-chain metadata (name: "Division 1", symbol: "DC1")
 - ✅ 1 billion token supply with 9 decimals
 - ✅ Automated token creation and minting scripts
-- 🚧 College wallet linking (planned)
-- 🚧 Fee distribution mechanism (planned)
+
+### Program Features
+- ✅ User wallet linking to school wallets via PDAs
+- ✅ Initialize, update, and remove school wallet links
+- ✅ Event emissions for all link operations
+- ✅ Secure PDA-based account management
+- ✅ Comprehensive error handling
 
 ## Token Details
 
@@ -32,15 +40,17 @@ This project creates Division One ($D1C) tokens using Solana's Token-2022 standa
 - **Symbol**: DC1
 - **Decimals**: 9
 - **Max Supply**: 1,000,000,000 tokens
-- **Transfer Fee**: 3% (300 basis points)
+- **Transfer Fee**: 3.5% (350 basis points)
 - **Max Fee Cap**: 1 billion tokens
-- **Network**: Solana Devnet (for testing)
+- **Network**: Solana Devnet
+- **Program ID**: `4iGFn1jtAj41Ttn7EKyXzfLWvSvpKYYw9saqCVSD6dRF`
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) 16+
 - [Yarn](https://yarnpkg.com/getting-started/install)
 - [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools) 1.18+
+- [Anchor CLI](https://www.anchor-lang.com/docs/installation) 0.30+
 - Solana wallet with devnet SOL
 
 ## Setup
@@ -68,111 +78,197 @@ This project creates Division One ($D1C) tokens using Solana's Token-2022 standa
    solana airdrop 2
    ```
 
-## Scripts
+4. **Build the Anchor program**
+   ```bash
+   anchor build
+   ```
 
-### 1. Create Token
+5. **Deploy the program**
+   ```bash
+   anchor deploy
+   ```
 
-Creates a new Token-2022 mint with both metadata and transfer fee extensions.
+## Project Structure
+
+```
+division-one-crypto/
+├── programs/
+│   └── division-one-crypto/
+│       └── src/
+│           └── lib.rs              # Main Solana program
+├── scripts/
+│   ├── create-token.ts             # Token-2022 creation
+│   ├── mint-tokens.ts              # Token minting
+│   ├── wallet-generator.ts         # Generate school wallets
+│   ├── wallet-link-simple.ts       # Original client library
+│   ├── simple-user-link-client.ts  # Simplified client library
+│   └── test-simple-flow.ts         # Complete flow testing
+├── data/
+│   ├── schools.json                # 361 Division I schools
+│   └── schools-wallets.json        # Schools with wallet addresses
+├── tests/                          # Anchor tests
+├── migrations/                     # Anchor deployment
+├── Anchor.toml                     # Anchor configuration
+└── README.md
+```
+
+## Scripts & Usage
+
+### 1. Token Creation and Minting
+
+#### Create Token
+Creates a new Token-2022 mint with metadata and transfer fee extensions.
 
 ```bash
 yarn ts-node scripts/create-token.ts
 ```
 
-**What this script does:**
-- Creates a new Token-2022 mint account
-- Initializes metadata extension with token name, symbol, and URI
-- Configures transfer fees (3% on all transfers)
-- Uses your wallet as mint authority and update authority
-- Outputs mint address and transaction details
+**Features:**
+- Token-2022 with metadata extension
+- 3.5% transfer fees on all transfers
+- On-chain metadata (name, symbol, URI)
+- Configurable authorities
 
-**Configuration in the script:**
-```typescript
-// Token metadata
-name: "Division 1"
-symbol: "DC1"
-uri: "https://api.jsonbin.io/v3/qs/68641c458561e97a502fc72a"
-
-// Transfer fees
-feeBasisPoints: 300 // 3%
-maxFee: BigInt(1_000_000_000_000_000_000) // 1 billion tokens
-```
-
-### 2. Mint Tokens
-
+#### Mint Tokens
 Mints 1 billion tokens to your wallet.
 
 ```bash
 yarn ts-node scripts/mint-tokens.ts
 ```
 
-**Before running:**
-1. Update the `mintAddress` in the script with your token's mint address
-2. Ensure you are the mint authority
+**Before running:** Update the `mintAddress` in the script with your token's mint address.
 
-**What this script does:**
-- Creates an associated token account for your wallet (if needed)
-- Mints 1,000,000,000 tokens to your account
-- Outputs transaction details and token account address
+### 2. School Wallet Management
 
-## Usage Example
+#### Generate School Wallets
+Creates wallet addresses for all Division I schools.
 
-1. **Create a new token:**
+```bash
+yarn ts-node scripts/wallet-generator.ts
+```
+
+**Output:** Updates `data/schools-wallets.json` with generated wallet addresses for 361 schools.
+
+### 3. User Wallet Linking
+
+#### Simple Client Library
+Use the simplified client for wallet linking operations:
+
+```typescript
+import { SimpleUserLinkClient } from './scripts/simple-user-link-client';
+
+const client = new SimpleUserLinkClient(connection, wallet);
+
+// Initialize user link with a school
+await client.initializeUserLink(schoolWallet);
+
+// Update school wallet
+await client.updateSchoolWallet(newSchoolWallet);
+
+// Remove school link
+await client.removeSchoolLink();
+
+// Get user link info
+const userLink = await client.getUserLink();
+```
+
+#### Test Complete Flow
+Run the complete testing flow:
+
+```bash
+yarn ts-node scripts/test-simple-flow.ts
+```
+
+**What this does:**
+1. Generates a test user wallet
+2. Funds the test user with SOL
+3. Creates user link with a random school
+4. Updates the school wallet link
+5. Removes the school link
+6. Verifies all operations
+
+## Solana Program Details
+
+### Program ID
+`4iGFn1jtAj41Ttn7EKyXzfLWvSvpKYYw9saqCVSD6dRF`
+
+### Instructions
+
+1. **initialize_user_link** - Create initial user-to-school wallet link
+2. **update_school_wallet** - Change linked school wallet
+3. **remove_school_link** - Remove school wallet link
+
+### Account Structure
+
+```rust
+pub struct UserLink {
+    pub user_wallet: Pubkey,      // User's wallet address
+    pub school_wallet: Pubkey,    // Linked school wallet
+    pub created_at: i64,          // Creation timestamp
+    pub updated_at: i64,          // Last update timestamp
+    pub bump: u8,                 // PDA bump seed
+}
+```
+
+### PDA Seeds
+User links are stored in PDAs with seeds: `["user_link", user_wallet]`
+
+### Events
+- `UserLinkCreated` - Emitted when user creates initial link
+- `SchoolWalletUpdated` - Emitted when user changes school
+- `SchoolLinkRemoved` - Emitted when user removes school link
+
+## School Data
+
+The project includes comprehensive data for 361 Division I schools:
+
+- **schools.json** - Complete school information (name, location, conference, etc.)
+- **schools-wallets.json** - Same data with generated Solana wallet addresses
+
+### Sample School Entry
+```json
+{
+  "id": "001",
+  "School": "Abilene Christian University",
+  "Common name": "Abilene Christian",
+  "Nickname": "Wildcats",
+  "City": "Abilene",
+  "State": "TX",
+  "Type": "Private",
+  "Subdivision": "FCS",
+  "Primary": "Western Athletic Conference",
+  "Wallet Address": "7HyYr2WDccUyMBDSajsddoNXS4yKiMrwcJHAiaeqMn14"
+}
+```
+
+## Fee Structure & Future Distribution
+
+| Component | Rate | Current Status | Future Purpose |
+|-----------|------|---------------|----------------|
+| Transfer Fee | 3.5% | ✅ Collected automatically | College athletics funding based on user links |
+| Distribution | TBD | 🚧 Planned | Automated distribution to linked school wallets |
+
+**Current Fee Collection:**
+- Fees are automatically deducted from all token transfers
+- Accumulated fees are held in token accounts
+- Fee authorities can withdraw accumulated fees
+
+## Development Workflow
+
+1. **Token Development:**
    ```bash
    yarn ts-node scripts/create-token.ts
-   ```
-   
-   Save the mint address from the output.
-
-2. **Update mint-tokens.ts:**
-   ```typescript
-   const mintAddress = new PublicKey('YOUR_MINT_ADDRESS_HERE');
-   ```
-
-3. **Mint 1 billion tokens:**
-   ```bash
    yarn ts-node scripts/mint-tokens.ts
    ```
 
-4. **Transfer tokens:** Use any Solana wallet or application. The 3% transfer fee will be automatically collected.
+2. **Program Development:**
+   ```bash
+   anchor build
+   anchor deploy
+   anchor test
+   ```
 
-## Token-2022 Extensions Used
-
-### Metadata Pointer Extension
-- Stores token metadata directly on the mint account
-- Includes name, symbol, URI, and additional metadata
-- Allows for on-chain metadata updates
-
-### Transfer Fee Extension
-- Automatically collects 3% fee on all token transfers
-- Fees accumulate in a withheld balance
-- Configurable authorities for fee management
-
-## Fee Structure
-
-| Component | Rate | Authority | Purpose |
-|-----------|------|-----------|---------|
-| Transfer Fee | 3.0% | Your Wallet | Future college athletics funding, burning, OPs wallet |
-
-**Fee Collection:**
-- Fees are automatically deducted from transfers
-- Accumulated fees are held in the token accounts
-- Fee authorities can withdraw accumulated fees
-- No additional transactions required from users
-
-## Future Development
-
-### College Wallet Linking Program
-A Solana program that will:
-- Create PDAs linking user accounts to their chosen college wallets
-- Enable users to register and update their college affiliations
-- Provide a registry for fee distribution
-
-## Project Structure
-
-division-one-crypto/
-├── scripts/
-│ ├── create-token.ts
-│ └── mint-tokens.ts
-├── package.json
-├── tsconfig.json
-└── README.md
+3. **Integration Testing:**
+   ```bash
+   yarn ts-node scripts/test-simple-flow.ts
+   ```

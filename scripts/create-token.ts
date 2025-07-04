@@ -42,7 +42,7 @@ import * as os from 'os';
   // Transfer fee configuration
   const transferFeeConfigAuthority = payer.publicKey;
   const withdrawWithheldAuthority = payer.publicKey;
-  const feeBasisPoints = 300; // 3%
+  const feeBasisPoints = 350; // 3.5%
   const maxFee = BigInt(1_000_000_000_000_000_000); // 1 billion tokens
 
   // Metadata to store in Mint Account
