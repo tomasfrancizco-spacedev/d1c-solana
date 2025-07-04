@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("BAnYCRzAkVJSTNiHYZcDnRo8B1e2pSssQwAJEjdEcLbL");
+declare_id!("4iGFn1jtAj41Ttn7EKyXzfLWvSvpKYYw9saqCVSD6dRF");
 
 #[program]
 pub mod division_one_crypto {
@@ -100,7 +100,7 @@ pub struct UpdateUserLink<'info> {
         mut,
         seeds = [b"user_link", user_link.user_wallet.as_ref()],
         bump = user_link.bump,
-        has_one = user_wallet @ ErrorCode::UnauthorizedAccess
+        constraint = user_link.user_wallet == user.key() @ ErrorCode::UnauthorizedAccess
     )]
     pub user_link: Account<'info, UserLink>,
     
@@ -154,10 +154,6 @@ pub struct SchoolLinkRemoved {
 pub enum ErrorCode {
     #[msg("Unauthorized access to user link")]
     UnauthorizedAccess,
-    #[msg("Invalid school wallet provided")]
-    InvalidSchoolWallet,
-    #[msg("User link already exists")]
-    UserLinkAlreadyExists,
     #[msg("User link does not exist")]
     UserLinkNotFound,
 }

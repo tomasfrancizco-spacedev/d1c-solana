@@ -17,6 +17,15 @@ export class UserLinkClient {
         );
     }
 
+    static deriveCollegeRegistryPDA(
+        programId: PublicKey
+    ): [PublicKey, number] {
+        return PublicKey.findProgramAddressSync(
+            [Buffer.from("college_registry")],
+            programId
+        );
+    }
+
     async initializeUserLink(
         userWallet: PublicKey,
         schoolWallet: PublicKey,
@@ -27,11 +36,16 @@ export class UserLinkClient {
             this.program.programId
         );
 
+        const [collegeRegistryPDA] = UserLinkClient.deriveCollegeRegistryPDA(
+            this.program.programId
+        );
+
         const tx = await this.program.methods
             .initializeUserLink(schoolWallet)
             .accounts({
                 userLink: userLinkPDA,
                 user: userWallet,
+                collegeRegistry: collegeRegistryPDA,
                 authority: authority.publicKey,
                 systemProgram: SystemProgram.programId,
             })
@@ -56,10 +70,16 @@ export class UserLinkClient {
             this.program.programId
         );
 
+        const [collegeRegistryPDA] = UserLinkClient.deriveCollegeRegistryPDA(
+            this.program.programId
+        );
+
         const tx = await this.program.methods
             .updateSchoolWallet(newSchoolWallet)
             .accounts({
                 userLink: userLinkPDA,
+                user: userWallet,
+                collegeRegistry: collegeRegistryPDA,
                 authority: authority.publicKey,
             })
             .signers([authority])
@@ -81,10 +101,16 @@ export class UserLinkClient {
             this.program.programId
         );
 
+        const [collegeRegistryPDA] = UserLinkClient.deriveCollegeRegistryPDA(
+            this.program.programId
+        );
+
         const tx = await this.program.methods
             .removeSchoolLink()
             .accounts({
                 userLink: userLinkPDA,
+                user: userWallet,
+                collegeRegistry: collegeRegistryPDA,
                 authority: authority.publicKey,
             })
             .signers([authority])
@@ -140,6 +166,23 @@ export class UserLinkClient {
         }
     }
 
+    async getCollegeRegistry() {
+        const [collegeRegistryPDA] = UserLinkClient.deriveCollegeRegistryPDA(
+            this.program.programId
+        );
+
+        try {
+            const collegeRegistry = await this.program.account.collegeRegistry.fetch(collegeRegistryPDA);
+            return {
+                pda: collegeRegistryPDA,
+                ...collegeRegistry,
+            };
+        } catch (error) {
+            console.log("College registry not found or doesn't exist");
+            return null;
+        }
+    }
+
     async userLinkExists(userWallet: PublicKey): Promise<boolean> {
         const userLink = await this.getUserLink(userWallet);
         return userLink !== null;
@@ -154,5 +197,85 @@ export class UserLinkClient {
         }
         
         return userLink.schoolWallet;
+    }
+
+    async isSchoolRegistered(schoolWallet: PublicKey): Promise<boolean> {
+        const collegeRegistry = await this.getCollegeRegistry();
+        if (!collegeRegistry) return false;
+        
+        return collegeRegistry.schoolWallets.some(
+            (wallet: PublicKey) => wallet.equals(schoolWallet)
+        );
+    }
+
+    async initializeCollegeRegistry(
+        schoolWallets: PublicKey[],
+        authority: Keypair
+    ): Promise<string> {
+        const [collegeRegistryPDA] = UserLinkClient.deriveCollegeRegistryPDA(
+            this.program.programId
+        );
+
+        const tx = await this.program.methods
+            .initializeCollegeRegistry(schoolWallets)
+            .accounts({
+                collegeRegistry: collegeRegistryPDA,
+                authority: authority.publicKey,
+                systemProgram: SystemProgram.programId,
+            })
+            .signers([authority])
+            .rpc();
+
+        console.log(`✅ College registry initialized: ${tx}`);
+        console.log(`👑 Authority: ${authority.publicKey.toString()}`);
+        console.log(`📚 Schools registered: ${schoolWallets.length}`);
+
+        return tx;
+    }
+
+    async addSchoolToRegistry(
+        schoolWallet: PublicKey,
+        authority: Keypair
+    ): Promise<string> {
+        const [collegeRegistryPDA] = UserLinkClient.deriveCollegeRegistryPDA(
+            this.program.programId
+        );
+
+        const tx = await this.program.methods
+            .addSchoolToRegistry(schoolWallet)
+            .accounts({
+                collegeRegistry: collegeRegistryPDA,
+                authority: authority.publicKey,
+            })
+            .signers([authority])
+            .rpc();
+
+        console.log(`✅ School added to registry: ${tx}`);
+        console.log(`🔗 School Wallet: ${schoolWallet.toString()}`);
+
+        return tx;
+    }
+
+    async removeSchoolFromRegistry(
+        schoolWallet: PublicKey,
+        authority: Keypair
+    ): Promise<string> {
+        const [collegeRegistryPDA] = UserLinkClient.deriveCollegeRegistryPDA(
+            this.program.programId
+        );
+
+        const tx = await this.program.methods
+            .removeSchoolFromRegistry(schoolWallet)
+            .accounts({
+                collegeRegistry: collegeRegistryPDA,
+                authority: authority.publicKey,
+            })
+            .signers([authority])
+            .rpc();
+
+        console.log(`✅ School removed from registry: ${tx}`);
+        console.log(`🔗 School Wallet: ${schoolWallet.toString()}`);
+
+        return tx;
     }
 } 

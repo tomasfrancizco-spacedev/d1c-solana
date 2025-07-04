@@ -8,7 +8,7 @@ skip-lint = false
 division_one_crypto = "D6XYa4oPwgMnVX59YbFLxbYstUYEc2YTddx6xTLY4uRs"
 
 [programs.devnet]
-division_one_crypto = "BAnYCRzAkVJSTNiHYZcDnRo8B1e2pSssQwAJEjdEcLbL"
+division_one_crypto = "4iGFn1jtAj41Ttn7EKyXzfLWvSvpKYYw9saqCVSD6dRF"
 
 [registry]
 url = "https://api.apr.dev"

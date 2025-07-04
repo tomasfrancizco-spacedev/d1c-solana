@@ -21,19 +21,14 @@ import * as os from 'os';
   const payerKeypairPath = `${os.homedir()}/.config/solana/id.json`;
   const payerKeypairData = JSON.parse(fs.readFileSync(payerKeypairPath, 'utf8'));
   const payer = Keypair.fromSecretKey(new Uint8Array(payerKeypairData));
-  
-  console.log('Using wallet:', payer.publicKey.toBase58());
 
   // Token mint address - replace with your latest token mint address
-  const mintAddress = new PublicKey('REPLACE_WITH_YOUR_MINT_ADDRESS');
+  const mintAddress = new PublicKey('F1S2XhTa4c6Br4hstqW6gN7RfkY8hDKzQ6BeT5hjHha8');
   
   // Amount to mint: 1 billion tokens
   // With 9 decimals: 1,000,000,000 * 10^9 = 1,000,000,000,000,000,000
   const tokensToMint = BigInt(1_000_000_000) * BigInt(10 ** 9); // 1 billion tokens
   
-  console.log('Mint address:', mintAddress.toBase58());
-  console.log('Tokens to mint:', tokensToMint.toString(), '(1 billion tokens)');
-
   const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
   // Get or create associated token account for the payer
@@ -43,8 +38,6 @@ import * as os from 'os';
     false, // allowOwnerOffCurve
     TOKEN_2022_PROGRAM_ID,
   );
-
-  console.log('Associated token account:', associatedTokenAccount.toBase58());
 
   const transaction = new Transaction();
 
