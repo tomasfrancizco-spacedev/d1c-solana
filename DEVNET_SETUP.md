@@ -238,21 +238,6 @@ solana account [MINT_ADDRESS]
 
 ---
 
-## 🎯 Testing Scenarios
-
-### Basic Test (Included)
-- Transfer 1 token
-- Verify 3.5% fee deduction
-- Check final balances
-
-### Additional Test Ideas
-- Transfer different amounts (0.1, 10, 100 tokens)
-- Test maximum fee limits
-- Test with different sender/receiver pairs
-- Verify withheld fees accumulation
-
----
-
 ## 🔗 Useful Links
 
 - [Solana Explorer (Devnet)](https://explorer.solana.com/?cluster=devnet)
@@ -285,7 +270,3 @@ npx ts-node scripts/create-token.ts
 # Copy mint address, update test script
 npx ts-node scripts/test-transfer-fee.ts
 ```
-
----
-
-*Happy testing! 🚀* 
