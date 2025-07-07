@@ -22,8 +22,8 @@ import * as os from 'os';
   const payerKeypairData = JSON.parse(fs.readFileSync(payerKeypairPath, 'utf8'));
   const payer = Keypair.fromSecretKey(new Uint8Array(payerKeypairData));
 
-  // Token mint address - replace with your latest token mint address
-  const mintAddress = new PublicKey('F1S2XhTa4c6Br4hstqW6gN7RfkY8hDKzQ6BeT5hjHha8');
+  // Token mint address - replace with latest token mint address
+  const mintAddress = new PublicKey('TOKEN_MINT_ADDRESS');
   
   // Amount to mint: 1 billion tokens
   // With 9 decimals: 1,000,000,000 * 10^9 = 1,000,000,000,000,000,000
@@ -62,7 +62,7 @@ import * as os from 'os';
   const mintInstruction = createMintToInstruction(
     mintAddress, // mint
     associatedTokenAccount, // destination
-    payer.publicKey, // mint authority (your wallet)
+    payer.publicKey, // mint authority
     tokensToMint, // amount
     [], // multi signers (none)
     TOKEN_2022_PROGRAM_ID,
