@@ -55,7 +55,15 @@ import * as os from 'os';
     additionalMetadata: [["description", "Division One Crypto Token"]],
   };
 
-  const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+  // Configuration
+  const USE_LOCALHOST = true; // Set to false for devnet
+  
+  const connection = new Connection(
+    USE_LOCALHOST ? "http://localhost:8899" : clusterApiUrl("devnet"), 
+    "confirmed"
+  );
+  
+  console.log('Using cluster:', USE_LOCALHOST ? 'localhost:8899' : 'devnet');
 
   // Extensions for both metadata and transfer fees
   const extensions = [ExtensionType.MetadataPointer, ExtensionType.TransferFeeConfig];
@@ -137,7 +145,14 @@ import * as os from 'os';
     );
 
     console.log('\n✅ Token created successfully with both metadata and transfer fees!');
-    console.log('Transaction:', `https://explorer.solana.com/address/${transactionSignature}?cluster=devnet`);
+    
+    if (USE_LOCALHOST) {
+      console.log('Transaction signature:', transactionSignature);
+      console.log('View in Solana Explorer (localhost):', `https://explorer.solana.com/tx/${transactionSignature}?cluster=custom&customUrl=http%3A%2F%2Flocalhost%3A8899`);
+    } else {
+      console.log('Transaction:', `https://explorer.solana.com/address/${transactionSignature}?cluster=devnet`);
+    }
+    
     console.log('Mint Address:', mint.toBase58());
     console.log('Mint Authority:', mintAuthority.toBase58());
     console.log('Update Authority:', updateAuthority.toBase58());
@@ -149,8 +164,14 @@ import * as os from 'os';
   } catch (error) {
     console.error('❌ Transaction failed:', error);
     console.log('\nThis might be due to:');
-    console.log('1. Insufficient SOL balance');
-    console.log('2. Network issues');
-    console.log('3. Extension configuration problems');
+    if (USE_LOCALHOST) {
+      console.log('1. Local Solana validator not running (run: solana-test-validator)');
+      console.log('2. Insufficient SOL balance (request airdrop: solana airdrop 10)');
+      console.log('3. Extension configuration problems');
+    } else {
+      console.log('1. Insufficient SOL balance');
+      console.log('2. Network issues');
+      console.log('3. Extension configuration problems');
+    }
   }
 })(); 
