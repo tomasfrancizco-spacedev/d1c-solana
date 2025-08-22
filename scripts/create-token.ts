@@ -50,7 +50,7 @@ import * as os from 'os';
     updateAuthority: updateAuthority,
     mint: mint,
     name: "Division 1",
-    symbol: "DC1",
+    symbol: "D1C",
     uri: "https://api.jsonbin.io/v3/qs/68641c458561e97a502fc72a",
     additionalMetadata: [["description", "Division One Crypto Token"]],
   };
