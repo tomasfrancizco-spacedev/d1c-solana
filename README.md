@@ -23,7 +23,7 @@ This project creates Division One ($D1C) tokens using Solana's Token-2022 standa
 ### Token Features
 - ✅ Token-2022 compliant with metadata extension
 - ✅ Built-in 3.5% transfer fees
-- ✅ On-chain metadata (name: "Division 1", symbol: "DC1")
+- ✅ On-chain metadata (name: "Division 1", symbol: "D1C")
 - ✅ 1 billion token supply with 9 decimals
 - ✅ Automated token creation and minting scripts
 
@@ -37,7 +37,7 @@ This project creates Division One ($D1C) tokens using Solana's Token-2022 standa
 ## Token Details
 
 - **Name**: Division 1
-- **Symbol**: DC1
+- **Symbol**: D1C
 - **Decimals**: 9
 - **Max Supply**: 1,000,000,000 tokens
 - **Transfer Fee**: 3.5% (350 basis points)
